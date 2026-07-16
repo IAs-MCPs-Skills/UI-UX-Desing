@@ -11,12 +11,15 @@
     "assets"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target node",
+    "build": "node scripts/build.mjs",
     "dev": "bun run src/index.ts",
     "sync:assets": "node scripts/sync-assets.mjs",
     "check:assets": "node scripts/sync-assets.mjs --check",
+    "validate:csv": "cd .. && python3 scripts/validate-csv.py",
+    "smoke:domains": "cd .. && bash scripts/smoke-domains.sh",
+    "smoke:stacks": "cd .. && bash scripts/smoke-stacks.sh",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run sync:assets && npm run typecheck && bun run build"
+    "prepublishOnly": "npm run sync:assets && npm run validate:csv && npm run smoke:domains && npm run smoke:stacks && npm run typecheck && npm run build"
   },
   "keywords": [
     "ui",
@@ -38,13 +41,14 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^5.3.0",
-    "commander": "^15.0.0",
-    "ora": "^9.4.1",
+    "commander": "^12.1.0",
+    "ora": "^8.1.1",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.14",
-    "@types/node": "^26.0.1",
+    "@playwright/test": "^1.61.1",
+    "@types/bun": "^1.1.14",
+    "@types/node": "^22.10.1",
     "@types/prompts": "^2.4.9",
     "typescript": "^6.0.3"
   }

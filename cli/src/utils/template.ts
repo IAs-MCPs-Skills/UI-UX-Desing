@@ -1,11 +1,17 @@
+import { existsSync } from 'node:fs';
 import { readFile, mkdir, writeFile, cp, access, readdir, lstat, rm } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// After bun build: dist/index.js -> ../assets = cli/assets ✓
-const ASSETS_DIR = join(__dirname, '..', 'assets');
+const ASSETS_CANDIDATES = [
+  // Bun bundle: dist/index.js
+  join(__dirname, '..', 'assets'),
+  // TypeScript fallback: dist/utils/template.js
+  join(__dirname, '..', '..', 'assets'),
+];
+const ASSETS_DIR = ASSETS_CANDIDATES.find(path => existsSync(path)) ?? ASSETS_CANDIDATES[0];
 
 export interface PlatformConfig {
   platform: string;
@@ -46,6 +52,7 @@ const AI_TO_PLATFORM: Record<string, string> = {
   kilocode: 'kilocode',
   warp: 'warp',
   augment: 'augment',
+  codewhale: 'codewhale',
 };
 
 async function exists(path: string): Promise<boolean> {
