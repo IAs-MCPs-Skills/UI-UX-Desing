@@ -1,13 +1,15 @@
-name: Smoke test stacks
+name: Smoke test data
 
 on:
   pull_request:
     paths:
-      - 'src/ui-ux-pro-max/data/stacks/**'
+      - 'src/ui-ux-pro-max/data/**'
       - 'src/ui-ux-pro-max/scripts/**'
-      - 'cli/assets/data/stacks/**'
+      - 'cli/assets/data/**'
       - 'cli/assets/scripts/**'
+      - 'scripts/validate-csv.py'
       - 'scripts/smoke-stacks.sh'
+      - 'scripts/smoke-domains.sh'
       - '.github/workflows/smoke-stacks.yml'
   push:
     branches: [main]
@@ -23,6 +25,12 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: '3.x'
+
+      - name: Validate CSV structure
+        run: python3 scripts/validate-csv.py
+
+      - name: Run domain smoke test
+        run: bash scripts/smoke-domains.sh
 
       - name: Run stack smoke test
         run: bash scripts/smoke-stacks.sh

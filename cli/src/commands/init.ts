@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import chalk from 'chalk';
@@ -19,8 +20,13 @@ import {
 } from '../utils/github.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// From dist/index.js -> ../assets (one level up to cli/, then assets/)
-const ASSETS_DIR = join(__dirname, '..', 'assets');
+const ASSETS_CANDIDATES = [
+  // Bun bundle: dist/index.js
+  join(__dirname, '..', 'assets'),
+  // TypeScript fallback: dist/commands/init.js
+  join(__dirname, '..', '..', 'assets'),
+];
+const ASSETS_DIR = ASSETS_CANDIDATES.find(path => existsSync(path)) ?? ASSETS_CANDIDATES[0];
 
 interface InitOptions {
   ai?: AIType;
